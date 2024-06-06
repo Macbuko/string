@@ -1,0 +1,30 @@
+int withsp(const char **s, void *p, int width, int is_short, int is_long, int is_long_long) {
+    int count = 0;
+    while (isdigit(**s) && count < width) {
+        count++;
+        switch (is_short + is_long * 2 + is_long_long * 4) {
+            case 1: {
+                short *sp = (short *)p;
+                *sp = *sp * 10 + (**s - '0');
+                break;
+            }
+            case 2: {
+                long *lp = (long *)p;
+                *lp = *lp * 10 + (**s - '0');
+                break;
+            }
+            case 4: {
+                long long *llp = (long long *)p;
+                *llp = *llp * 10 + (**s - '0');
+                break;
+            }
+            default: {
+                int *ip = (int *)p;
+                *ip = *ip * 10 + (**s - '0');
+                break;
+            }
+        }
+        (*s)++;
+    }
+    return count;
+}
