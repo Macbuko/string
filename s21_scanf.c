@@ -4,9 +4,12 @@
 #include <stdlib.h>
 #include "s21_scanf.h"
 
-int star(const char **s) {
-    int count = 0;
-    while (isspace(**s) || **s != '\0') {
+
+
+
+void star(const char **s) {
+
+    while (s21_isspace(**s)) {
         (*s)++;
 
     }
@@ -15,17 +18,17 @@ int star(const char **s) {
 
                          }
 
-    while (isdigit(**s)) {
+    while (s21_isdigit(**s)) {
         (*s)++;
 
     }
 
-    return count;
+
 }
 
-int star_char(const char **s) {
-    int count = 0;
-    while (isspace(**s)) {
+void star_char(const char **s) {
+
+    while (s21_isspace(**s)) {
         (*s)++;
 
     }
@@ -33,19 +36,19 @@ int star_char(const char **s) {
         (*s)++;
 
     }
-    return count;
+
 }
 
-int star_str(const char **s) {
-    int count = 0;
-    while (isspace(**s)) {
+void star_str(const char **s) {
+
+    while (s21_isspace(**s)) {
         (*s)++;
 
     }
     while (**s != ' ' && **s != '\0') {
                         (*s)++;
                     }
-    return count;
+
 }
 
 
@@ -53,7 +56,7 @@ int tipe_int(const char **s, void *p, int is_short, int is_long) {
     int count = 0;
     int sing = 1;
 
-    while (isspace(**s)) {
+    while (s21_isspace(**s)) {
                         (*s)++;
                     }
     while (**s == '-' || **s == '+') {
@@ -64,11 +67,17 @@ int tipe_int(const char **s, void *p, int is_short, int is_long) {
                         (*s)++;
          }
         long long num = 0;
-        while (isdigit(**s)) {
+        //int digits_read = 0;
+        while (s21_isdigit(**s)) {
         num = num * 10 + (**s - '0');
             (*s)++;
 
         }
+      //  digits_read++;
+      //  printf ("%d", digits_read);
+     //   if (digits_read == 0) {
+    //    return NULL;
+   // }
          num *= sing;
          count++;
 
@@ -100,7 +109,7 @@ int tipe_float (const char **s, void *p, int is_long) {
     int count = 0;
     int sing = 1;
 
-    while (isspace(**s)) {
+    while (s21_isspace(**s)) {
                         (*s)++;
                     }
     while (**s == '-' || **s == '+') {
@@ -111,7 +120,7 @@ int tipe_float (const char **s, void *p, int is_long) {
                         (*s)++;
                         }
                     long double num = 0;
-                    while (isdigit(**s) ) {
+                    while (s21_isdigit(**s) ) {
                         num = num * 10.0f + (**s - '0');
                         (*s)++;
                             }
@@ -119,7 +128,7 @@ int tipe_float (const char **s, void *p, int is_long) {
                                 (*s)++;
 
                                 long double div = 10.0f;
-                                while (isdigit(**s)) {
+                                while (s21_isdigit(**s)) {
                                     num += (**s - '0') / div;
                                     div *= 10.0f;
                                     (*s)++;
@@ -180,12 +189,12 @@ int my_sscanf(const char *str, const char *format, ...) {
     va_list args;
     va_start(args, format);
     int count = 0;
-    int width = 0;
+
     const char *s = str;
     const char *f = format;
 
     while (*f != '\0') {
-        while (isspace(*f)) {
+        while (s21_isspace(*f)) {
             f++;
         }
 
@@ -217,9 +226,11 @@ int my_sscanf(const char *str, const char *format, ...) {
             switch (*f) {
             case 'd': {
                 if (the_star)
-                count += star(&s);
+                star(&s);
                 else {
                 void *p = va_arg(args, void *);
+                //if ((tipe_int(&s, p, is_short, is_long)) == NULL)
+               // flag =1;
                 count += tipe_int(&s, p, is_short, is_long);
                 }
                 break;
@@ -227,7 +238,7 @@ int my_sscanf(const char *str, const char *format, ...) {
 
            case 'f': {
                 if (the_star)
-                count += star(&s);
+                star(&s);
                 else {
                 void *p = va_arg(args, void *);
                 count += tipe_float (&s, p, is_long);
@@ -236,12 +247,12 @@ int my_sscanf(const char *str, const char *format, ...) {
                 }
             case 's': {
                 if (the_star)
-                count += star_str(&s);
+                star_str(&s);
 
                else  {
                 char *p = va_arg(args, char *);
 
-                    while (isspace(*s)) {
+                    while (s21_isspace(*s)) {
                     s++;
                     }
 
@@ -257,10 +268,10 @@ int my_sscanf(const char *str, const char *format, ...) {
                 }
         case 'c': {
                 if (the_star)
-                count += star_char(&s);
+                star_char(&s);
                   else  {
                     char *p = va_arg(args, char *);
-                     while (isspace(*s)) {
+                     while (s21_isspace(*s)) {
                         s++;
                     }
                     *p++ = *s++;
@@ -273,19 +284,19 @@ int my_sscanf(const char *str, const char *format, ...) {
             }
             f++;
         } else {
-            if (*s == *f) {
+           /* if (*s == *f) {
                 s++;
                 f++;
-            } else {
+            } else {*/
                 break;
-            }
+           // }
         }
     }
 
     va_end(args);
     return count;
 }
-int main()
+/*int main()
 {
     int i;
     long long i4, i2, i1;
@@ -294,15 +305,15 @@ int main()
     char c;
     char s[100];
 
-char a[100] = " -340     -55555.999 hello t";
+char a[100] = " -340   -55555.999 hello    t";
 
 
 
 
-   int count = my_sscanf(a,"%lld %*Lf %s %c", &i2, &f, &s, &c);
+   int count = my_sscanf(a,"%lld %Lf %s %c", &i2, &f, &s, &c);
 
   //
- //int counts = sscanf(a,"%lld %*Lf %s %c", &i2, &f, &s, &c);
+ //int counts = sscanf(a,"%lld %f %s %c", &i2, &f, &s, &c);
 
 
   printf("Count: %d\n", count);
@@ -311,4 +322,21 @@ char a[100] = " -340     -55555.999 hello t";
    // printf("i1: %lld %Lf\n", i1, f3);
 
     return 0;
+}
+*/
+int s21_isspace(int ch) {
+
+    if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '\f' || ch == '\v') {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int s21_isdigit(int ch) {
+    if (ch >= '0' && ch <= '9') {
+        return 1;
+    } else {
+        return 0;
+    }
 }
