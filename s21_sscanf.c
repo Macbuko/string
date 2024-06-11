@@ -284,6 +284,9 @@ int s21_sscanf(const char *str, const char *format, ...) {
       int the_star = 0;
       if (*f == '%') {
         f++;
+         while (s21_isspace(*s)) {
+    s++;
+  }
         if (*f == '%') {
           if (*s == *f) {
             s++;
@@ -619,3 +622,4 @@ s21_size_t s21_strlen(const char *str) {
 
   return cnt;
 }
+
