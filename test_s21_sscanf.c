@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "s21_scanf.h"
+#include "s21_sscanf.h"
 
 START_TEST(test_scan_int) {
   int a, b, c, s, f, g;
@@ -207,7 +207,7 @@ END_TEST
 START_TEST(test_scan_protchent) {
   int a, s;
 
-  char str[10] = "%5";
+  char str[10] = " %5";
   int count = s21_sscanf(str, "%%%d", &a);
   int counts = sscanf(str, "%%%d", &s);
   ck_assert_int_eq(count, counts);
@@ -216,6 +216,17 @@ START_TEST(test_scan_protchent) {
 END_TEST
 
 START_TEST(test_scan_protchent1) {
+  int a, s, q, w;
+
+  char str[10] = "%5 5";
+  int count = s21_sscanf(str, "%%%d %d", &w, &a);
+  int counts = sscanf(str, "%%%d %d", &q, &s);
+  ck_assert_int_eq(count, counts);
+  ck_assert_int_eq(a, s);
+  ck_assert_int_eq(w, q);
+}
+END_TEST
+START_TEST(test_scan_protchent2) {
   int a, s, q, w;
 
   char str[10] = " 5 %5";
@@ -278,7 +289,7 @@ END_TEST
 START_TEST(test_scan_i1) {
   int a, b;
   int a1, b1;
-  char str[] = "  0x2A  0100 ";
+  char str[] = "  0x2A  100 ";
   int count = s21_sscanf(str, "%i %i    ", &a, &b);
   int counts = sscanf(str, "%i %i  ", &a1, &b1);
 
@@ -287,6 +298,18 @@ START_TEST(test_scan_i1) {
   ck_assert_int_eq(b, b1);
 }
 END_TEST
+START_TEST(test_scan_i2) {
+  int a, b, s, w;
+  int a1, b1;
+  char str[] = "  0x2A  0100  10";
+  int count = s21_sscanf(str, "%i %i %i", &a, &b, &s);
+  int counts = sscanf(str, "%i %i %i", &a1, &b1, &w);
+
+  ck_assert_int_eq(count, counts);
+  ck_assert_int_eq(a, a1);
+  ck_assert_int_eq(b, b1);
+   ck_assert_int_eq(s, w);
+}
 
 START_TEST(test_scan_hex1) {
   int a, s;
@@ -367,11 +390,13 @@ int main(void) {
   tcase_add_test(tcase, test_scan_error4);
   tcase_add_test(tcase, test_scan_protchent);
   tcase_add_test(tcase, test_scan_protchent1);
+  tcase_add_test(tcase, test_scan_protchent2);
   tcase_add_test(tcase, test_scan_unsigned);
   tcase_add_test(tcase, test_scan_octal);
   tcase_add_test(tcase, test_scan_hex);
   tcase_add_test(tcase, test_scan_i);
   tcase_add_test(tcase, test_scan_i1);
+  tcase_add_test(tcase, test_scan_i2);
   tcase_add_test(tcase, test_scan_hex1);
   tcase_add_test(tcase, test_scan_octal1);
   tcase_add_test(tcase, test_scan_n);
